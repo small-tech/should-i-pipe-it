@@ -11,14 +11,13 @@ module.exports = async app => {
   app.get('/*', async (request, response) => {
     const url = request.url.replace('/', '')
     if (url.startsWith('https://')) {
-      let source = null
-      const sourceRequest = prepareRequest('string')
       try {
-        source = await sourceRequest(url)
+        const sourceRequest = prepareRequest('string')
+        const source = await sourceRequest(url)
+        return html(response, 'Here’s the code, read it and decide:', `<pre><code>${source}</code></pre>`)
       } catch (error) {
         return html(response, error.message, `<h3>Usage</h3>${usage}`)
       }
-      return html(response, 'Here’s the code, read it and decide:', `<pre><code>${source}</code></pre>`)
     } else if (url.startsWith('http://')) {
       return html(response, 'No, that’s an insecure URL!', 'Don’t pipe that into your shell. Try the URL again with an <strong>https://</strong> prefix.')
     } else {
