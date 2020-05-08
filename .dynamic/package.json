@@ -1,0 +1,21 @@
+{
+  "name": "should-i-pipe.it",
+  "version": "1.0.0",
+  "description": "Shows you the source code of the script you’re about to pipe.",
+  "main": "routes.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pipe",
+    "shell",
+    "script",
+    "security",
+    "verify"
+  ],
+  "author": "Aral Balkan",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "bent": "^7.3.0"
+  }
+}
