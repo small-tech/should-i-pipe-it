@@ -20,10 +20,9 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m] })
 }
 
-// First, make a head request. If this is not a text/plain file (or, until I implement content-type overrides
-// in Site.js, the erroneously labelled application/x-install-instructions that Express’s static server
-// returns for https://site.js/install) or if the presented size of the file is larger than what’s reasonable,
-// abort the request here. Note: the server might be lying so the actual protection is implemented in the GET call.
+// First, make a head request. If this is not a valid content type or if the presented size of the file is larger than
+// what’s reasonable, abort the request here. Note: the server might be lying so the actual protection is implemented
+// in the GET call.
 function preVerifyDownloadViaHeadRequest (url) {
   return new Promise((resolve, reject) => {
     const headRequest = https.request(url, {method: 'HEAD'}, response => {
@@ -33,8 +32,8 @@ function preVerifyDownloadViaHeadRequest (url) {
 
       if (statusCode !== 200) { reject(new Error(statusCode)) }
 
-      if (!reportedContentType.startsWith('text/plain') && !reportedContentType.startsWith('application/x-install-instructions')) {
-        reject(new Error(`<p>This does not look like an installation script.</p><p>(Its content type is not text/plain.)</p>`))
+      if (!reportedContentType.startsWith('text/plain') && !reportedContentType.startsWith('application/x-sh') && !reportedContentType.startsWith('application/x-csh') && !reportedContentType.startsWith('text/x-shellscript') && !reportedContentType.startsWith('application/x-install-instructions')) {
+        reject(new Error(`<p>This does not look like an installation script.</p><p>(Its content type is not text/plain, text/x-shellscript, application/x-sh, or application/x-csh.)</p>`))
       }
 
       if (parseInt(reportedContentSize) > 100000) {

@@ -84,7 +84,7 @@ Verified installation scripts:
   - Must not violate a person’s privacy.
   - Must not have apparent security issues.
   - Must be served over TLS (https).
-  - Must be served using a content type of `text/plain`.
+  - Must be served using a content type of `text/plain`, `text/x-shellscript`, `application/x-sh`, or `application/x-csh`.
 
 Note that my own [Site.js](https://sitejs.org)’s install script is being erroneously served as content type `application/x-install-instructions` by Site.js’s Express static server. I have [an issue open](https://source.small-tech.org/site.js/app/-/issues/168) to fix this after the next release. Until then, temporarily, Should I pipe it? also accepts this content type.
 
