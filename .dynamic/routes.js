@@ -86,12 +86,14 @@ const html = (response, advice, details, colors) => {
     <style>
       html { font-family: system-ui, sans; background-color: whitesmoke; padding: 0 1rem 0 1rem; }
       body { margin: 1rem auto 2rem auto; max-width: 760px; }
-      pre, #advice {
+      .rounded-box {
         padding: 1rem;
+        box-shadow: 0 0 0.5rem rgba(42,42,42,0.25);
+        border-radius: 0.75rem;
+      }
+      pre {
         white-space: pre-wrap;
         word-break: break-word;
-        box-shadow: 0 0 0.5rem rgba(17,17,17,0.25);
-        border-radius: 0.75rem;
         background-color: white;
       }
       ul { list-style: none; }
@@ -105,12 +107,12 @@ const html = (response, advice, details, colors) => {
       #advice a { color: white; }
       #hash button { min-width: 6em; margin-left: 1em; }
       #hash pre { display: flex; justify-content: space-between; align-items: center; }
-      #fund-us { background-color: lightgray; padding: 1em; margin: 2em -1em; }
+      #fund-us { background-color: lightgray; margin: 2em 0; box-shadow: none; border: 4px solid darkgray; }
     </style>
     <h1>Should I pipe it?</h1>
-    ${advice ? `<h2 id='advice'>${advice}</h2>` : ''}
+    ${advice ? `<h2 id='advice' class='rounded-box'>${advice}</h2>` : ''}
     ${details}
-    <section id='fund-us'>
+    <section id='fund-us' class='rounded-box'>
       <h3>Like this? <a href='https://small-tech.org/'>Fund us!</a></h3>
       <p>We are a tiny, independent not-for-profit.</p>
       <p>We exist in part thanks to patronage by people like you. If you share our vision and want to support our work, please <a href='https://small-tech.org/fund-us'>become a patron or donate to us</a> today and help us continue to exist.</p>
@@ -140,7 +142,7 @@ const html = (response, advice, details, colors) => {
     `)
 }
 
-const usage = '<pre><code><strong>https://should-i-pipe.it/</strong><em>https://</em>link.to/some/script</code></pre>'
+const usage = "<pre class='rounded-box'><code><strong>https://should-i-pipe.it/</strong><em>https://</em>link.to/some/script</code></pre>"
 
 const regularColours  = { advice: 'orangered', links: 'steelblue' }
 const warningColours  = { advice: 'crimson', links: 'steelblue' }
