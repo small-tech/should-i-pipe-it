@@ -15,7 +15,5 @@
   ],
   "author": "Aral Balkan",
   "license": "AGPL-3.0-or-later",
-  "dependencies": {
-    "bent": "^7.3.0"
-  }
+  "dependencies": {}
 }

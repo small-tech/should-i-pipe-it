@@ -10,20 +10,70 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+const https          = require('https')
 const crypto         = require('crypto')
-const prepareRequest = require('bent')
 const verifiedHashes = require('./verified-hashes.json')
 
-// Courtesy: https://stackoverflow.com/a/4835406/92548
 function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }
+  // Courtesy: https://stackoverflow.com/a/4835406/92548
+  var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }
   return text.replace(/[&<>"']/g, function(m) { return map[m] })
+}
+
+// First, make a head request. If this is not a text/plain file (or, until I implement content-type overrides
+// in Site.js, the erroneously labelled application/x-install-instructions that Express’s static server
+// returns for https://site.js/install) or if the presented size of the file is larger than what’s reasonable,
+// abort the request here. Note: the server might be lying so the actual protection is implemented in the GET call.
+function preVerifyDownloadViaHeadRequest (url) {
+  return new Promise((resolve, reject) => {
+    const headRequest = https.request(url, {method: 'HEAD'}, response => {
+      const reportedContentType = response.headers['content-type']
+      const reportedContentSize = response.headers['content-length']
+
+      if (!reportedContentType.startsWith('text/plain') && !reportedContentType.startsWith('application/x-install-instructions')) {
+        reject(new Error(`This does not look like an installation script. Its content type is not text/plain.`))
+      }
+
+      if (parseInt(reportedContentSize) > 100000) {
+        reject(new Error('The script is over 100KB in size. This is huge for an installation script. Be careful.'))
+      }
+
+      resolve()
+    })
+
+    headRequest.setTimeout(3000, () => {
+      reject(new Error('Timed out while attempting to get information about the script.'))
+    })
+
+    headRequest.end()
+  })
+}
+
+// Given that we download arbitrary content off the Interwebs, I’m rolling my own fetch method here so I can
+// have checks for file type and file size as well as a reasonable timeout. No fun getting owned while trying to help
+// other folks to not get owned ;)
+async function downloadInstallationScript(url) {
+  await preVerifyDownloadViaHeadRequest(url)
+
+  return new Promise((resolve, reject) => {
+    const getRequest = https.get(url, response => {
+      const statusCode = response.statusCode
+      if (statusCode !== 200) { reject(new Error(statusCode)) }
+
+      let body = ''
+      response.on('data', chunk => {
+        body += chunk
+        if (body.length > 100000) {
+          reject(new Error('The download is over 100KB but was reported as being smaller. Aborting. Be careful.'))
+        }
+      })
+
+      response.on('end', () => { resolve(body) })
+    })
+    getRequest.setTimeout(3000, () => {
+      reject(new Error('Timed out while attempting to download the script.'))
+    })
+  })
 }
 
 const html = (response, advice, details, colors) => {
@@ -80,8 +130,7 @@ module.exports = async app => {
     const url = request.url.replace('/', '')
     if (url.startsWith('https://')) {
       try {
-        const sourceRequest = prepareRequest('string')
-        const source = await sourceRequest(url)
+        const source = await downloadInstallationScript(url)
 
         const hash = crypto.createHash('blake2b512').update(source).digest('hex')
         const sourceHtml = escapeHtml(source)
@@ -117,8 +166,13 @@ module.exports = async app => {
         `
         return html(response, advice, details, colours)
       } catch (error) {
-        if (error.message.includes('404')) error.message = 'Error 404: There is no script at that URL.'
-        return html(response, error.message, `<h3>Usage</h3>${usage}`, warningColours)
+        let errorMessage
+        if (error.message === '404') {
+          errorMessage = 'Error 404: There is no script at that URL.'
+        } else {
+          errorMessage = `Error: could not download the script. <small>(${error.message})</small>`
+        }
+        return html(response, errorMessage, `<h3>Usage</h3>${usage}`, warningColours)
       }
     } else if (url.startsWith('http://')) {
       return html(response, `No, that’s an insecure URL! <small><a href='https://should-i-pipe.it/${url.replace("http://", "https://")}'>Try the URL again with an HTTPS prefix.</a></small>`, '', warningColours)
