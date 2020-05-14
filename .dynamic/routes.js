@@ -86,7 +86,7 @@ const html = (response, advice, details, colors) => {
     <style>
       html { font-family: system-ui, sans; background-color: whitesmoke; padding: 0 1rem 0 1rem; }
       body { margin: 1rem auto 2rem auto; max-width: 760px; }
-      .rounded-box {
+      pre, .rounded-box {
         padding: 1rem;
         box-shadow: 0 0 0.5rem rgba(42,42,42,0.25);
         border-radius: 0.75rem;
@@ -127,22 +127,23 @@ const html = (response, advice, details, colors) => {
       selectedHash.selectNode(hash)
       window.getSelection().addRange(selectedHash)
 
-      try {
-        const success = document.execCommand('copy')
-        if (!success) console.log('Failed to copy the hash.')
-      } catch(error) {
-        console.log('Copy command threw an error', error)
-      }
+      let successfullyCopied = false
+      try { successfullyCopied = document.execCommand('copy') } catch (error) { /* do nothing */ }
 
       // Remove the selections - NOTE: Should use
       // removeRange(range) when it is supported
       window.getSelection().removeRange(selectedHash)
+
+      // Provide feedback.
+      const copyButton = document.querySelector('#copy-button')
+      copyButton.innerHTML = successfullyCopied ? '👍' : '❌'
+      setTimeout(() => { copyButton.innerHTML = 'Copy'}, 700)
     }
     </script>
     `)
 }
 
-const usage = "<pre class='rounded-box'><code><strong>https://should-i-pipe.it/</strong><em>https://</em>link.to/some/script</code></pre>"
+const usage = "<pre><code><strong>https://should-i-pipe.it/</strong><em>https://</em>link.to/some/script</code></pre>"
 
 const regularColours  = { advice: 'orangered', links: 'steelblue' }
 const warningColours  = { advice: 'crimson', links: 'steelblue' }
@@ -174,10 +175,10 @@ module.exports = async app => {
           </ul>
           <h2 id='verifiers'>Verifiers</h2>
           <ul>
-            ${verifiedHash.verifiers.reduce((html, verifier) => `${html}<li><a href='${verifier.url}'>${verifier.name}</a> ${verifier.isTheAuthor ? '(the author of the script)' : ''}</li>`, '')}
+            ${verifiedHash.verifiers.reduce((html, verifier) => `${html}<li><a href='${verifier.url}'>${verifier.name}</a> ${verifier.isAuthorOfScript ? '(the author of the script)' : ''}</li>`, '')}
           </ul>
           `
-          advice= `It should be fine, but always <a href='#source'>check the code yourself</a> also.`
+          advice= `It seems fine, but <a href='#source'>check the code for yourself</a> and decide.`
           colours = verifiedColours
         }
         details = `
