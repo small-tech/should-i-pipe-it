@@ -27,11 +27,14 @@ function escapeHtml(text) {
 function preVerifyDownloadViaHeadRequest (url) {
   return new Promise((resolve, reject) => {
     const headRequest = https.request(url, {method: 'HEAD'}, response => {
+      const statusCode = response.statusCode
       const reportedContentType = response.headers['content-type']
       const reportedContentSize = response.headers['content-length']
 
+      if (statusCode !== 200) { reject(new Error(statusCode)) }
+
       if (!reportedContentType.startsWith('text/plain') && !reportedContentType.startsWith('application/x-install-instructions')) {
-        reject(new Error(`This does not look like an installation script. Its content type is not text/plain.`))
+        reject(new Error(`<p>This does not look like an installation script.</p><p>(Its content type is not text/plain.)</p>`))
       }
 
       if (parseInt(reportedContentSize) > 100000) {
@@ -207,11 +210,10 @@ module.exports = async app => {
         `
         return html(response, advice, details, colours)
       } catch (error) {
-        let errorMessage
+        let errorMessage = { title: 'Oops!', body: error.message }
         if (error.message === '404') {
-          errorMessage = 'Error 404: There is no script at that URL.'
-        } else {
-          errorMessage = `Error: could not download the script. <small>(${error.message})</small>`
+          errorMessage.title = 'Error 404'
+          errorMessage.body = '<p>There was no file at that address.</p><p>(Please check the URL and try again.)</p>'
         }
         return html(response, errorMessage, `<h3>Usage</h3>${usage}`, warningColours)
       }
