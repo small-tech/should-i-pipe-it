@@ -1,6 +1,10 @@
 # Should I pipe it?
 
-A very basic service that currently only shows you the code of a script that you’re being asked to pipe into your shell so you can review it.
+__Is this installation script safe to pipe into my shell?__
+
+Piping a script to your shell is a common way (especially for developers) to install apps from the Web. However, it is also notoriously risky, especially if you don’t know what exactly you’re asking your computer to execute.
+
+Should I pipe it? is a simple attempt to solve the latter problem.
 
 ## Usage
 
