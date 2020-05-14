@@ -169,7 +169,7 @@ module.exports = async app => {
         let advice = {
           title: 'We don’t know.',
           body: `<p><a href='#source'>Please check the code yourself</a>.<p>
-            <p>If it looks good to you, help us <a href=''>verify it</a>.</p>`
+            <p>If it looks good to you, help us <a href='https://github.com/small-tech/should-i-pipe-it/blob/master/README.md'>verify it</a>.</p>`
         }
 
         if (hash in verifiedHashes) {
