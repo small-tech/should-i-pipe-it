@@ -103,6 +103,8 @@ const html = (response, advice, details, colors) => {
       #advice { background-color: ${colors.advice}; color: white;}
       #advice small { display: block; margin-top: 1.25em; font-size: 0.75em;}
       #advice a { color: white; }
+      #hash button { min-width: 6em; margin-left: 1em; }
+      #hash pre { display: flex; justify-content: space-between; align-items: center; }
       #fund-us { background-color: lightgray; padding: 1em; margin: 2em -1em; }
     </style>
     <h1>Should I pipe it?</h1>
@@ -116,6 +118,25 @@ const html = (response, advice, details, colors) => {
     <p>Shared with &hearts; by <a href='https://small-tech.org'>Small Technology Foundation</a>.</p>
     <p><a href='https://small-tech.org/privacy'>Our privacy policy</a> is “we exist to protect your privacy.”</p>
     <p><a href='https://source.small-tech.org/aral/should-i-pipe-it'>View source</a>.</p>
+    <script>
+    function copyHashToClipboard () {
+      const hash = document.querySelector('#hash-value')
+      const selectedHash = document.createRange()
+      selectedHash.selectNode(hash)
+      window.getSelection().addRange(selectedHash)
+
+      try {
+        const success = document.execCommand('copy')
+        if (!success) console.log('Failed to copy the hash.')
+      } catch(error) {
+        console.log('Copy command threw an error', error)
+      }
+
+      // Remove the selections - NOTE: Should use
+      // removeRange(range) when it is supported
+      window.getSelection().removeRange(selectedHash)
+    }
+    </script>
     `)
 }
 
@@ -159,10 +180,17 @@ module.exports = async app => {
         }
         details = `
           ${details}
-          <h2 id='hash'>Hash</h2>
-          <pre><code>${hash}</code></pre>
-          <h2 id='source'>Source</h2>
-          <pre><code>${sourceHtml}</code></pre>
+          <section id='hash'>
+            <h2>Hash</h2>
+            <pre>
+              <code id='hash-value'>${hash}</code>
+              <button id='copy-button' onclick="copyHashToClipboard()">Copy</button>
+            </pre>
+          </section>
+          <section id='source'>
+            <h2>Source</h2>
+            <pre><code>${sourceHtml}</code></pre>
+          </section>
         `
         return html(response, advice, details, colours)
       } catch (error) {
