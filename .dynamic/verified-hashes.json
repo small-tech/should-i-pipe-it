@@ -1,1 +1,12 @@
-{}
+{
+  "ce5c4c8c5118ba01a1b88e9ca23ff81a09d3cf12e66983947cbd59f1ca4f5a906f59d02142d05aac9d304874123b42f2639436151d4e675b8d0549a6c9f4de6c": {
+    "url": "https://sitejs.org/install",
+    "verifiers": [
+      {
+        "name": "Aral Balkan",
+        "isAuthorOfScript": true,
+        "url": "https://github.com/small-tech/should-i-pipe-it/pull/1"
+      }
+    ]
+  }
+}
