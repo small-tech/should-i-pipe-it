@@ -8,5 +8,15 @@
         "url": "https://github.com/small-tech/should-i-pipe-it/pull/1"
       }
     ]
+  },
+  "8647861593c13faa0414d7d66f3673facffc672459ead1edef9b15d035f8a689473d42427c068c71ee613f80f621b1919cba8b3a043ba6f5c6fd124b78f57d1c": {
+    "url": "https://sitejs.org/install.txt",
+    "verifiers": [
+      {
+        "name": "Aral Balkan",
+        "isAuthorOfScript": true,
+        "url": "https://github.com/small-tech/should-i-pipe-it/pull/2"
+      }
+    ]
   }
 }
