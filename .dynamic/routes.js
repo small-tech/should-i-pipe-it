@@ -63,7 +63,7 @@ async function downloadInstallationScript(url) {
       let body = ''
       response.on('data', chunk => {
         body += chunk
-        if (body.length > 100000) {
+        if (Buffer.byteLength(body) > 100000) {
           reject(new Error('The download is over 100KB but was reported as being smaller. Aborting. Be careful.'))
         }
       })
@@ -82,44 +82,46 @@ const html = (response, advice, details, colors) => {
   <!doctype html>
     <html lang='en'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Should I pipe it? ${advice}</title>
+    <title>Should I pipe it? ${advice ? ` – ${advice.title}` : ''}</title>
     <style>
+      * { border-box: }
       html { font-family: system-ui, sans; background-color: whitesmoke; padding: 0 1rem 0 1rem; }
-      body { margin: 1rem auto 2rem auto; max-width: 760px; }
-      pre, .rounded-box {
-        padding: 1rem;
-        box-shadow: 0 0 0.5rem rgba(42,42,42,0.25);
-        border-radius: 0.75rem;
-      }
-      pre {
-        white-space: pre-wrap;
-        word-break: break-word;
-        background-color: white;
-      }
+      h1 { font-size: 3rem; margin: 0.5em 0;}
+      h2 { font-size: 2rem; margin: 1em 0 0.5em 0; }
+      h3 { font-size: 1.5rem; }
+      footer, h1, h2, h3 { margin-left: 1rem; }
+      body { margin: 1rem auto 2rem auto; max-width: 760px; color: #304349; }
+      pre, .rounded-box { padding: 1rem; box-shadow: 0 0 0.5rem rgba(42,42,42,0.25); border-radius: 0.75rem; }
+      .rounded-box h2, .rounded-box h3 { margin-left: 0; }
+      pre { white-space: pre-wrap; word-break: break-word; background-color: white; }
       ul { list-style: none; }
       ul li.true:before { content: '✅';  margin-right: 0.5em; }
       ul li.false:before { content: '❌'; margin-right: 0.5em; }
-      li { margin-left: -2.5em; padding-bottom: 0.25em; }
-      p { max-width: 760px; }
+      li { margin-left: -3rem; padding-bottom: 0.25em; }
+      #verifiers + ul li { margin-left: -1.25rem; }
       a { color: ${colors.links}; text-decoration-thickness: 0.10em; }
       #advice { background-color: ${colors.advice}; color: white;}
-      #advice small { display: block; margin-top: 1.25em; font-size: 0.75em;}
+      #advice h2 { margin-top: 0; }
+      #advice p:first-of-type { display: block; margin-top: 1em; font-size:1.5rem; margin-bottom: -0.25em;}
+      #advice p:last-of-type { margin-bottom : 0; }
       #advice a { color: white; }
       #hash button { min-width: 6em; margin-left: 1em; }
       #hash pre { display: flex; justify-content: space-between; align-items: center; }
       #fund-us { background-color: lightgray; margin: 2em 0; box-shadow: none; border: 4px solid darkgray; }
     </style>
     <h1>Should I pipe it?</h1>
-    ${advice ? `<h2 id='advice' class='rounded-box'>${advice}</h2>` : ''}
+    ${advice ? `<section id='advice' class='rounded-box'><h2>${advice.title}</h2>${advice.body}</section>` : ''}
     ${details}
     <section id='fund-us' class='rounded-box'>
       <h3>Like this? <a href='https://small-tech.org/'>Fund us!</a></h3>
       <p>We are a tiny, independent not-for-profit.</p>
       <p>We exist in part thanks to patronage by people like you. If you share our vision and want to support our work, please <a href='https://small-tech.org/fund-us'>become a patron or donate to us</a> today and help us continue to exist.</p>
     </section>
-    <p>Shared with &hearts; by <a href='https://small-tech.org'>Small Technology Foundation</a>.</p>
-    <p><a href='https://small-tech.org/privacy'>Our privacy policy</a> is “we exist to protect your privacy.”</p>
-    <p><a href='https://source.small-tech.org/aral/should-i-pipe-it'>View source</a>.</p>
+    <footer>
+      <p>Shared with &hearts; by <a href='https://small-tech.org'>Small Technology Foundation</a>.</p>
+      <p><a href='https://small-tech.org/privacy'>Our privacy policy</a> is “we exist to protect your privacy.”</p>
+      <p><a href='https://source.small-tech.org/aral/should-i-pipe-it'>View source</a>.</p>
+    </footer>
     <script>
     function copyHashToClipboard () {
       const hash = document.querySelector('#hash-value')
@@ -161,7 +163,11 @@ module.exports = async app => {
 
         let details = ''
         let colours = regularColours
-        let advice = `No one has verified this script yet. Please <a href='#source'>check the code yourself</a>.<small>Want to vouch for it? Here’s how.</small></a>`
+        let advice = {
+          title: 'We don’t know.',
+          body: `<p><a href='#source'>Please check the code yourself</a>.<p>
+            <p>If it looks good to you, help us <a href=''>verify it</a>.</p>`
+        }
 
         if (hash in verifiedHashes) {
           const verifiedHash = verifiedHashes[hash]
@@ -178,7 +184,11 @@ module.exports = async app => {
             ${verifiedHash.verifiers.reduce((html, verifier) => `${html}<li><a href='${verifier.url}'>${verifier.name}</a> ${verifier.isAuthorOfScript ? '(the author of the script)' : ''}</li>`, '')}
           </ul>
           `
-          advice= `It seems fine, but <a href='#source'>check the code for yourself</a> and decide.`
+          advice= {
+            title: 'It looks fine to us…',
+            body: `<p>But please read the details below and decide for yourself.</p>
+              <p>You can also <a href='#source'>check the code for yourself</a>.</p>`
+          }
           colours = verifiedColours
         }
         details = `
