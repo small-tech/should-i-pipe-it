@@ -18,5 +18,15 @@
         "url": "https://github.com/small-tech/should-i-pipe-it/pull/2"
       }
     ]
+  },
+  "984a81da052906553f28510b75fa5cd49d148429dd2caf36bae790a5dc646eb8aef43cc79e95ebdabfe486ba1f252044741cf2ffc86bafa6d0a8263d74199633": {
+    "url": "https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh",
+    "verifiers": [
+      {
+        "name": "Aral Balkan",
+        "isAuthorOfScript": false,
+        "url": "https://github.com/small-tech/should-i-pipe-it/pull/3"
+      }
+    ]
   }
 }
