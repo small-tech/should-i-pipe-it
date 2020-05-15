@@ -115,14 +115,14 @@ const html = (response, advice, details, colors) => {
     ${advice ? `<section id='advice' class='rounded-box'><h2>${advice.title}</h2>${advice.body}</section>` : ''}
     ${details}
     <section id='fund-us' class='rounded-box'>
-      <h3>Like this? <a href='https://small-tech.org/'>Fund us!</a></h3>
+      <h3>Like this? <a href='https://small-tech.org/fund-us'>Fund us!</a></h3>
       <p>We are a tiny, independent not-for-profit.</p>
       <p>We exist in part thanks to patronage by people like you. If you share our vision and want to support our work, please <a href='https://small-tech.org/fund-us'>become a patron or donate to us</a> today and help us continue to exist.</p>
     </section>
     <footer>
       <p>Shared with &hearts; by <a href='https://small-tech.org'>Small Technology Foundation</a>.</p>
       <p><a href='https://small-tech.org/privacy'>Our privacy policy</a> is “we exist to protect your privacy.”</p>
-      <p><a href='https://source.small-tech.org/aral/should-i-pipe-it'>View source</a>.</p>
+      <p><a href='https://github.com/small-tech/should-i-pipe-it'>View source</a>.</p>
     </footer>
     <script>
     function copyHashToClipboard () {
