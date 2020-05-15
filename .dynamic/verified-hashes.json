@@ -28,5 +28,15 @@
         "url": "https://github.com/small-tech/should-i-pipe-it/pull/3"
       }
     ]
+  },
+  "a7eb95476659f5482345376c09cf7bbcc491490d2aca6751de554dcec229cfe9fc2167ea1ec50021560694360abe3a096340301e28540db09ac3615f61c25157": {
+    "url": "https://sh.rustup.rs",
+    "verifiers": [
+      {
+       	"name": "rugk",
+        "isAuthorOfScript": false,
+        "url": "https://github.com/small-tech/should-i-pipe-it/pull/4"
+      }
+    ]
   }
 }
