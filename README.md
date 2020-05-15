@@ -74,7 +74,7 @@ This is a simple attempt to solve the latter problem.
 
 8. Push your changes to the branch so that they show up in the pull request.
 
-9. Ideally ask some other friends to verify your script also. Three verifier per script would be ideal. I don’t think we need more than five.
+9. Ideally ask some other friends to verify your script also. Three verifiers per script would be ideal. I don’t think we need more than five.
 
 ## Verification requirements
 
