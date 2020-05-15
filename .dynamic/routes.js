@@ -217,9 +217,9 @@ module.exports = async app => {
         return html(response, errorMessage, `<h3>Usage</h3>${usage}`, warningColours)
       }
     } else if (url.startsWith('http://')) {
-      return html(response, `No, that’s an insecure URL! <small><a href='https://should-i-pipe.it/${url.replace("http://", "https://")}'>Try the URL again with an HTTPS prefix.</a></small>`, '', warningColours)
+      return html(response, { title: 'No, that’s not a secure download!', body: `<p>You should only be connecting to sites over TLS.</p><p>(<a href='https://should-i-pipe.it/${url.replace("http://", "https://")}'>Try the link again with an HTTPS prefix.</a>)</p>`}, '', warningColours)
     } else {
-      return html(response, '', `<h2>Usage</h2>${usage}`, regularColours)
+      return html(response, false, `<h2>Usage</h2>${usage}`, regularColours)
     }
   })
 }
