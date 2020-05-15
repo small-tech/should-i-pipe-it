@@ -33,7 +33,7 @@
     "url": "https://sh.rustup.rs",
     "verifiers": [
       {
-       	"name": "rugk",
+        "name": "rugk",
         "isAuthorOfScript": false,
         "url": "https://github.com/small-tech/should-i-pipe-it/pull/4"
       }
