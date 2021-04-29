@@ -32,15 +32,25 @@ function preVerifyDownloadViaHeadRequest (url) {
 
       if (statusCode !== 200) { reject(new Error(statusCode)) }
 
-      if (!reportedContentType.startsWith('text/plain') && !reportedContentType.startsWith('application/x-sh') && !reportedContentType.startsWith('application/x-csh') && !reportedContentType.startsWith('text/x-shellscript') && !reportedContentType.startsWith('application/x-install-instructions')) {
-        reject(new Error(`<p>This does not look like an installation script.</p><p>(Its content type is not text/plain, text/x-shellscript, application/x-sh, or application/x-csh.)</p>`))
+      if (
+        !reportedContentType.startsWith('text/plain')
+        && !reportedContentType.startsWith('application/x-sh')
+        && !reportedContentType.startsWith('application/x-csh')
+        && !reportedContentType.startsWith('text/x-shellscript')
+        && !reportedContentType.startsWith('text/x-sh')
+        && !reportedContentType.startsWith('application/x-install-instructions')
+      ) {
+        reject(new Error(`<p>This does not look like an installation script.</p><p>(Its content type is not text/plain, text/x-sh, text/x-shellscript, application/x-sh, or application/x-csh.)</p>`))
       }
 
       if (parseInt(reportedContentSize) > 100000) {
         reject(new Error('The script is over 100KB in size. This is huge for an installation script. Be careful.'))
       }
-
       resolve()
+    })
+
+    headRequest.on('error', error => {
+      reject(error)
     })
 
     headRequest.setTimeout(3000, () => {
@@ -56,7 +66,6 @@ function preVerifyDownloadViaHeadRequest (url) {
 // other folks to not get owned ;)
 async function downloadInstallationScript(url) {
   await preVerifyDownloadViaHeadRequest(url)
-
   return new Promise((resolve, reject) => {
     const getRequest = https.get(url, response => {
       const statusCode = response.statusCode
@@ -71,6 +80,9 @@ async function downloadInstallationScript(url) {
       })
 
       response.on('end', () => { resolve(body) })
+    })
+    getRequest.on('error', error => {
+      reject(error)
     })
     getRequest.setTimeout(3000, () => {
       reject(new Error('Timed out while attempting to download the script.'))
@@ -210,7 +222,7 @@ module.exports = async app => {
         return html(response, advice, details, colours)
       } catch (error) {
         let errorMessage = { title: 'Oops!', body: error.message }
-        if (error.message === '404') {
+        if (error.message === '404' || error.code === 'ENOTFOUND') {
           errorMessage.title = 'Error 404'
           errorMessage.body = '<p>There was no file at that address.</p><p>(Please check the URL and try again.)</p>'
         }
