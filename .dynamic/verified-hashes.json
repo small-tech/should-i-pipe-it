@@ -1,4 +1,15 @@
 {
+  "4965e7c9a4aaa83746fda5ccad6706dd1e43fab9cca892c2def57a1f8f5f4b4da14c311613ac092bc7b00908cce492cc6b37a75dfd03ff5321a92d19a1454748": {
+    "url": "https://go.jontes.page/dar.sh",
+    "verifiers": [
+      {
+        "name": "Jonatan Holmgren",
+        "isAuthorOfScript": true,
+        "url": ""
+      }
+    ]
+  },
+
   "f7a7a7d950f11e140de3909229aa369cd2246b87dd9281c3690f4cfcaca5c25426cbc2a0b8a65e7a3bc84eb95bb065cc23e59295922decbc97b14fd9fb7488d8": {
     "url": "https://sitejs.org/install",
     "verifiers": [
